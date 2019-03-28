@@ -8,4 +8,8 @@ export default (app: Application) => {
   router.post('/admin/signIn', controller.admin.session.sighIn);
   router.get('/admin/current', controller.admin.session.current);
   router.post('/admin/refreshToken', controller.admin.session.refreshToken);
+
+  router.post('/admin/:resources/search', controller.admin.resource.search);
+  router.delete('/admin/:resources/destroyAll', controller.admin.resource.destroyAll);
+  router.resources('/admin/:resources', '/admin/:resources', controller.admin.resource);
 };
