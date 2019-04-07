@@ -1,4 +1,4 @@
-import { bcrypt } from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import * as Sequelize from 'sequelize';
 import { Application } from 'egg';
 
