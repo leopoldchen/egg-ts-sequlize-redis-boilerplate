@@ -1,73 +1,63 @@
 import * as bcrypt from 'bcryptjs';
 import * as Sequelize from 'sequelize';
 import { Application } from 'egg';
+import { IAdmin } from '../../typings/custom/model';
 
 const { BIGINT, STRING, DATE } = Sequelize;
 
-interface IAdmin {
-  id?: number;
-  username?: string;
-  password?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-interface IAdminInstance extends IAdmin, Sequelize.Instance<IAdmin> {
-}
+type AdminInstance = typeof Sequelize.Model & (new (values?: object, options?: Sequelize.BuildOptions) => IAdmin);
 
 const schema = {
-  id: {
-    type: BIGINT,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+    id: {
+        type: BIGINT,
+        autoIncrement: true,
+        primaryKey: true,
+    },
 
-  username: {
-    type: STRING(64),
-    unique: true,
-    allowNull: false,
-  },
+    username: {
+        // tslint:disable-next-line:no-magic-numbers
+        type: STRING(64),
+        unique: true,
+        allowNull: false,
+    },
 
-  password: {
-    type: STRING(64),
-    allowNull: false,
-  },
+    password: {
+        // tslint:disable-next-line:no-magic-numbers
+        type: STRING(64),
+        allowNull: false,
+    },
 
-  createdAt: {
-    type: DATE,
-    allowNull: false,
-  },
+    createdAt: {
+        type: DATE,
+        allowNull: false,
+    },
 
-  updatedAt: {
-    type: DATE,
-    allowNull: false,
-  }
+    updatedAt: {
+        type: DATE,
+        allowNull: false,
+    },
 };
 
 const schemaOption = {
-  underscored: false,
-  charset: 'utf8mb4',
-  collate: 'utf8mb4_bin',
-}
+    underscored: false,
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_bin',
+};
 
 export default (app: Application) => {
-  const Model = app.model.define<IAdminInstance, IAdmin>(
-    'admins',
-    schema,
-    schemaOption
-  );
+    const Model = app.model.define('admins', schema, schemaOption) as AdminInstance;
 
-  Model.hook('beforeCreate', admin => {
-    if (admin.password) {
-      admin.password = bcrypt.hashSync(admin.password);
-    }
-  });
+    Model.addHook('beforeCreate', (admin: IAdmin) => {
+        if (admin.password) {
+            admin.password = bcrypt.hashSync(admin.password);
+        }
+    });
 
-  Model.hook('beforeUpdate', admin => {
-    if (admin.password) {
-      admin.password = bcrypt.hashSync(admin.password);
-    }
-  });
+    Model.addHook('beforeUpdate', (admin: IAdmin) => {
+        if (admin.password) {
+            admin.password = bcrypt.hashSync(admin.password);
+        }
+    });
 
-  return Model;
+    return Model;
 };
