@@ -5,7 +5,7 @@ import * as Pluralize from 'pluralize';
 export default class ResourceBaseController extends Controller {
     private async ensureAdmin() {
         const admin = await this.ctx.service.admin.current();
-        if (!admin) this.ctx.throw(404, 'invalid admin');
+        if (!admin) this.ctx.throw(401, 'Not Authorized!');
     }
 
     private async getResource() {

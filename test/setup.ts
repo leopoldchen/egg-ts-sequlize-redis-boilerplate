@@ -1,10 +1,10 @@
 'use strict';
 
-const { app } = require('egg-mock/bootstrap');
-const factories = require('./factories');
-const Redis = require('ioredis-mock');
+import { app } from 'egg-mock/bootstrap';
+import factories from './factories';
+import * as Redis from 'ioredis-mock';
 
-before(() => {
+before(async () => {
     factories(app);
     app.redis = new Redis();
 });
